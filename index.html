@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>Configurateur poulailler mobile</title>
-<link rel="stylesheet" href="style.css?v=11">
+<link rel="stylesheet" href="style.css?v=12">
 </head>
 <body>
 <header class="hero">
@@ -25,6 +25,10 @@
     </div>
   </div>
 </header>
+<section class="commande">
+  <label class="qte">Combien de poulaillers ? <input type="number" id="quantite" min="1" max="50" step="1" value="1"></label>
+  <p>Tarif dégressif sur le matériel jusqu'à 5 poulaillers.</p>
+</section>
 <section class="fiche">
   <div class="fiche-grille">
     <div class="fiche-bloc">
@@ -52,7 +56,6 @@
   </section>
   <aside id="recap">
     <h2>Votre commande</h2>
-    <label class="qte">Nombre de poulaillers <input type="number" id="quantite" min="1" max="50" step="1" value="1"></label>
     <ul id="recap-lignes"></ul>
     <p class="total"><span>Total HT</span><span id="total">0 €</span></p>
     <p class="ttc"><span>Total TTC</span><span id="ttc">0 €</span></p>
@@ -61,7 +64,7 @@
   </aside>
 </main>
 <footer>Poulailler mobile · configurateur en version de démonstration</footer>
-<script src="donnees.js?v=11"></script>
-<script src="configurateur.js?v=11"></script>
+<script src="donnees.js?v=12"></script>
+<script src="configurateur.js?v=12"></script>
 </body>
 </html>
