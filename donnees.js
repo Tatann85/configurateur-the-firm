@@ -1,5 +1,5 @@
 // Données du configurateur. Source : Google Sheet Nomenclature-Poulailler-2026-10-18-rev04, onglet Synthèse.
-// Prix de vente HT par sous-ensemble = règle de Vincent (ratio de 2), arrondis à l'euro.
+// Prix de vente HT par sous-ensemble.
 const TVA = 0.20;
 
 const SOUS_ENSEMBLES = [
