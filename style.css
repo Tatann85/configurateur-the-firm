@@ -32,6 +32,10 @@ main { max-width: 1100px; margin: 0 auto; padding: 0 16px 40px; display: grid; g
 .ttc { font-weight: 600; }
 .masse { color: var(--doux); }
 .mentions li { font-size: .8rem; color: var(--doux); margin-top: 6px; }
+.qte { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 12px; font-weight: 600; }
+.qte input { width: 70px; font: inherit; font-weight: 700; color: var(--vert); text-align: right; border: 1.5px solid var(--bord); border-radius: 8px; padding: 4px 6px; background: #fff; }
+#recap-lignes li.sous { border-top: 1px dashed var(--bord); margin-top: 4px; padding-top: 6px; font-weight: 600; }
+#recap-lignes li.remise { color: var(--crete); font-weight: 600; }
 footer { text-align: center; font-size: .8rem; color: var(--doux); padding: 20px 16px 28px; }
 .fiche { max-width: 1100px; margin: 0 auto; padding: 8px 16px 0; }
 .fiche-grille { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
@@ -53,3 +57,4 @@ footer { text-align: center; font-size: .8rem; color: var(--doux); padding: 20px
   .carte { grid-template-columns: 22px 1fr auto; }
   .carte img, .sans-image { display: none; }
 }
+#recap-lignes li span:last-child { white-space: nowrap; }

@@ -1,6 +1,9 @@
 (function () {
   const euro = new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
   const kg = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 0 });
+  const nb = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 1 });
+  const li = (k, v) => `<li><span>${k}</span><strong>${v}</strong></li>`;
+  const $ = id => document.getElementById(id);
   const selection = new Set(SOUS_ENSEMBLES.map(s => s.id));
 
   function carte(el, conteneur) {
@@ -22,34 +25,48 @@
     lab.querySelector("input").addEventListener("change", e => {
       e.target.checked ? selection.add(el.id) : selection.delete(el.id);
       lab.classList.toggle("choisi", e.target.checked);
-      recalcul();
+      tout();
     });
     conteneur.appendChild(lab);
   }
 
-  SOUS_ENSEMBLES.forEach(s => carte(s, document.getElementById("liste-se")));
-  OPTIONS.forEach(o => carte(o, document.getElementById("liste-opt")));
-  document.getElementById("mentions").innerHTML = MENTIONS.map(m => `<li>${m}</li>`).join("");
+  SOUS_ENSEMBLES.forEach(s => carte(s, $("liste-se")));
+  OPTIONS.forEach(o => carte(o, $("liste-opt")));
+  $("mentions").innerHTML = MENTIONS.map(m => `<li>${m}</li>`).join("");
+
+  // Quantité et tarif dégressif sur le matériel
+  function quantite() { return Math.max(1, Math.round(+$("quantite").value || 1)); }
+  function facteur(n) {
+    const pente = (REMISE.coefBase - REMISE.coefMin) / (REMISE.quantiteMin - 1);
+    return Math.max(REMISE.coefMin, REMISE.coefBase - pente * (n - 1)) / REMISE.coefBase;
+  }
+  function investissement() {
+    const n = quantite(), f = facteur(n);
+    let materiel = 0, service = 0;
+    [...SOUS_ENSEMBLES, ...OPTIONS].filter(e => selection.has(e.id) && e.actif !== false && e.prix != null)
+      .forEach(e => { if (SOUS_ENSEMBLES.includes(e)) materiel += e.prix; else service += e.prix; });
+    return { n, f, materiel, service, total: n * (materiel * f + service) };
+  }
 
   function recalcul() {
     const tous = [...SOUS_ENSEMBLES, ...OPTIONS].filter(e => selection.has(e.id) && e.actif !== false);
-    let total = 0, masse = 0;
-    document.getElementById("recap-lignes").innerHTML = tous.map(e => {
+    const inv = investissement();
+    let masse = 0;
+    $("recap-lignes").innerHTML = tous.map(e => {
       masse += e.masse;
-      total += e.prix || 0;
       return `<li><span>${e.nom}</span><span>${e.prix == null ? "Sur devis" : euro.format(e.prix)}</span></li>`;
-    }).join("");
-    document.getElementById("total").textContent = euro.format(total);
-    document.getElementById("ttc").textContent = euro.format(total * (1 + TVA));
-    document.getElementById("masse").textContent = kg.format(masse) + " kg";
+    }).join("") +
+      (inv.n > 1 ? `<li class="sous"><span>Prix d'un poulailler</span><span>${euro.format(inv.materiel + inv.service)}</span></li>` +
+        `<li><span>× ${inv.n} poulaillers</span><span>${euro.format(inv.n * (inv.materiel + inv.service))}</span></li>` : "") +
+      (inv.f < 1 ? `<li class="remise"><span>Remise quantité sur le matériel (− ${Math.round((1 - inv.f) * 100)} %)</span><span>− ${euro.format(inv.n * inv.materiel * (1 - inv.f))}</span></li>` : "");
+    $("total").textContent = euro.format(inv.total);
+    $("ttc").textContent = euro.format(inv.total * (1 + TVA));
+    $("masse").textContent = kg.format(masse * inv.n) + " kg";
   }
-  recalcul();
 
-  // Fiche technique et rendement
-  const nb = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 1 });
-  const li = (k, v) => `<li><span>${k}</span><strong>${v}</strong></li>`;
+  // Fiche technique
   const bandesDefaut = Math.round(365 * TECH.occupation / TECH.cycleJours * 10) / 10;
-  document.getElementById("chiffres").innerHTML =
+  $("chiffres").innerHTML =
     li("Dimensions au sol", nb.format(TECH.longueur) + " × " + nb.format(TECH.largeur) + " m") +
     li("Hauteur au faîtage", nb.format(TECH.hauteur) + " m") +
     li("Surface intérieure", TECH.surface + " m²") +
@@ -58,43 +75,43 @@
     `<li><span>Durée d'une bande</span><strong><input type="number" id="duree" min="30" max="200" step="1" value="${TECH.cycleJours}"> jours</strong></li>` +
     `<li><span>Bandes par an</span><strong><input type="number" id="bandes" min="0.5" max="12" step="0.1" value="${bandesDefaut}"></strong></li>` +
     `<li><span>Occupation du poulailler</span><strong id="occupation"></strong></li>`;
+  $("poussin").value = TECH.prixPoussin;
+  $("vente").value = TECH.prixPoulet;
 
-  document.getElementById("poussin").value = TECH.prixPoussin;
-  document.getElementById("vente").value = TECH.prixPoulet;
-
+  // Rendement
   function rendement() {
-    const prixPoussin = +document.getElementById("poussin").value || 0;
-    const prixVente = +document.getElementById("vente").value || 0;
-    const n = +document.getElementById("annees").value;
-    const duree = Math.max(1, +document.getElementById("duree").value || TECH.cycleJours);
+    const annees = +$("annees").value;
+    const prixPoussin = +$("poussin").value || 0;
+    const prixVente = +$("vente").value || 0;
+    const duree = Math.max(1, +$("duree").value || TECH.cycleJours);
     const bandesMax = Math.floor(365 / duree * 10) / 10;
-    const champBandes = document.getElementById("bandes");
-    champBandes.max = bandesMax;
-    let bandes = +champBandes.value || 0;
-    if (bandes > bandesMax) { bandes = bandesMax; champBandes.value = bandesMax; }
+    $("bandes").max = bandesMax;
+    let bandes = +$("bandes").value || 0;
+    if (bandes > bandesMax) { bandes = bandesMax; $("bandes").value = bandesMax; }
+    const inv = investissement(), q = inv.n, invest = inv.total;
     const joursProd = bandes * duree;
-    const pouletsAn = TECH.poulets * bandes;
+    const pouletsAn = q * TECH.poulets * bandes;
     const caAn = pouletsAn * prixVente;
     const poussinsAn = pouletsAn * prixPoussin;
-    const alimentAn = TECH.poulets * TECH.alimentGJour / 1000 * joursProd * TECH.prixAlimentTonne / 1000;
+    const alimentAn = q * TECH.poulets * TECH.alimentGJour / 1000 * joursProd * TECH.prixAlimentTonne / 1000;
     const margeAn = caAn - alimentAn - poussinsAn;
-    document.getElementById("occupation").textContent = Math.round(joursProd / 365 * 100) + " %";
-    document.getElementById("annees-val").textContent = n + (n > 1 ? " ans" : " an");
-    const invest = SOUS_ENSEMBLES.concat(OPTIONS).filter(e => selection.has(e.id) && e.prix != null).reduce((a, e) => a + e.prix, 0);
     const retour = margeAn > 0 ? invest / margeAn : Infinity;
-    document.getElementById("rendement").innerHTML =
-      li("Poulets produits", kg.format(pouletsAn * n)) +
-      li("Chiffre d'affaires", euro.format(caAn * n)) +
-      li("Achat des poussins", "− " + euro.format(poussinsAn * n)) +
-      li("Coût de l'aliment", "− " + euro.format(alimentAn * n)) +
-      li("Prix du poulailler", "− " + euro.format(invest)) +
-      `<li class="net"><span>Résultat net sur ${n} an${n > 1 ? "s" : ""}</span><strong>${euro.format(margeAn * n - invest)}</strong></li>` +
-      li("Poulailler amorti en", isFinite(retour) ? nb.format(retour) + " an" + (retour >= 2 ? "s" : "") : "non amorti");
-    document.getElementById("note-rendement").textContent =
+    $("occupation").textContent = Math.round(joursProd / 365 * 100) + " %";
+    $("annees-val").textContent = annees + (annees > 1 ? " ans" : " an");
+    $("rendement").innerHTML =
+      li("Poulets produits", kg.format(pouletsAn * annees)) +
+      li("Chiffre d'affaires", euro.format(caAn * annees)) +
+      li("Achat des poussins", "− " + euro.format(poussinsAn * annees)) +
+      li("Coût de l'aliment", "− " + euro.format(alimentAn * annees)) +
+      li(q > 1 ? "Prix des " + q + " poulaillers" : "Prix du poulailler", "− " + euro.format(invest)) +
+      `<li class="net"><span>Résultat net sur ${annees} an${annees > 1 ? "s" : ""}</span><strong>${euro.format(margeAn * annees - invest)}</strong></li>` +
+      li(q > 1 ? "Poulaillers amortis en" : "Poulailler amorti en", isFinite(retour) ? nb.format(retour) + " an" + (retour >= 2 ? "s" : "") : "non amorti");
+    $("note-rendement").textContent =
       "Estimation indicative : aliment à " + TECH.prixAlimentTonne + " € la tonne, " + TECH.alimentGJour +
       " g par jour et par poulet. Hors main d'œuvre, abattage, mortalité et frais vétérinaires.";
   }
-  ["annees", "duree", "bandes", "poussin", "vente"].forEach(id => document.getElementById(id).addEventListener("input", rendement));
-  document.addEventListener("change", rendement);
-  rendement();
+
+  function tout() { recalcul(); rendement(); }
+  ["quantite", "annees", "duree", "bandes", "poussin", "vente"].forEach(id => $(id).addEventListener("input", tout));
+  tout();
 })();

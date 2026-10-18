@@ -1,6 +1,8 @@
 // Données du configurateur. Source : Google Sheet Nomenclature-Poulailler-2026-10-18-rev04, onglet Synthèse.
 // Prix de vente HT par sous-ensemble.
 const TVA = 0.20;
+// Tarif dégressif sur les matériels : coefficient 2,5 pour 1 poulailler, linéaire jusqu'à 2 à partir de 5 poulaillers.
+const REMISE = { coefBase: 2.5, coefMin: 2.0, quantiteMin: 5 };
 
 const SOUS_ENSEMBLES = [
   { id: "SE10", nom: "Structure acier", obligatoire: true, prix: 8467, masse: 571.7, image: "img/structure-acier.jpg",
