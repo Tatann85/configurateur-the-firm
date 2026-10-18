@@ -25,12 +25,16 @@ const SOUS_ENSEMBLES = [
     description: "Réservoir d'eau 90 L." }
 ];
 
+// Montage : 2 charpentiers x 2 semaines x 35 h = 140 h a 120 EUR HT/h.
+const MONTAGE = { personnes: 2, semaines: 2, heuresParSemaine: 35, tauxHoraire: 120 };
+const HEURES_MONTAGE = MONTAGE.personnes * MONTAGE.semaines * MONTAGE.heuresParSemaine;
+
 const OPTIONS = [
-  { id: "MONTAGE", nom: "Montage sur site par charpentiers", prix: null, masse: 0, actif: false, mention: "Bientôt disponible",
-    description: "Une équipe vient monter le poulailler chez vous." }
+  { id: "MONTAGE", nom: "Montage sur site par nos charpentiers", prix: HEURES_MONTAGE * MONTAGE.tauxHoraire, masse: 0,
+    description: "2 charpentiers pendant 2 semaines montent le poulailler chez vous (" + HEURES_MONTAGE + " h à " + MONTAGE.tauxHoraire + " € HT/h)." }
 ];
 
 const MENTIONS = [
-  "Livré en kit, montage par vos soins.",
+  "Livré en kit : montage par vos soins, ou par notre équipe en option.",
   "Prix indicatifs. Livraison sur devis."
 ];
