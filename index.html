@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Configurateur poulailler mobile</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>Configurateur poulailler mobile</h1>
+  <p class="bandeau">Version de démonstration : composez votre poulailler, nous vous adressons un devis.</p>
+</header>
+<main>
+  <section id="choix">
+    <h2>Sous-ensembles</h2>
+    <div id="liste-se"></div>
+    <h2>Options</h2>
+    <div id="liste-opt"></div>
+  </section>
+  <aside id="recap">
+    <h2>Votre poulailler</h2>
+    <ul id="recap-lignes"></ul>
+    <p class="total"><span>Total HT</span><span id="total">0 €</span></p>
+    <p class="masse"><span>Masse estimée</span><span id="masse">0 kg</span></p>
+    <ul id="mentions" class="mentions"></ul>
+  </aside>
+</main>
+<script src="donnees.js"></script>
+<script src="configurateur.js"></script>
+</body>
+</html>
