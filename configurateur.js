@@ -44,4 +44,40 @@
     document.getElementById("masse").textContent = kg.format(masse) + " kg";
   }
   recalcul();
+
+  // Fiche technique et rendement
+  const nb = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 1 });
+  const joursProd = 365 * TECH.occupation;
+  const pouletsAn = TECH.poulets * joursProd / TECH.cycleJours;
+  const caAn = pouletsAn * TECH.prixPoulet;
+  const alimentAn = TECH.poulets * TECH.alimentGJour / 1000 * joursProd * TECH.prixAlimentTonne / 1000;
+  const margeAn = caAn - alimentAn;
+  const li = (k, v) => `<li><span>${k}</span><strong>${v}</strong></li>`;
+  document.getElementById("chiffres").innerHTML =
+    li("Dimensions au sol", nb.format(TECH.longueur) + " × " + nb.format(TECH.largeur) + " m") +
+    li("Hauteur au faîtage", nb.format(TECH.hauteur) + " m") +
+    li("Surface intérieure", TECH.surface + " m²") +
+    li("Capacité", TECH.poulets + " poulets") +
+    li("Densité", nb.format(TECH.poulets / TECH.surface) + " poulets/m²") +
+    li("Durée d'une bande", TECH.cycleJours + " jours") +
+    li("Bandes par an", nb.format(joursProd / TECH.cycleJours) + " (occupation " + Math.round(TECH.occupation * 100) + " %)");
+
+  function rendement() {
+    const n = +document.getElementById("annees").value;
+    document.getElementById("annees-val").textContent = n + (n > 1 ? " ans" : " an");
+    const invest = SOUS_ENSEMBLES.concat(OPTIONS).filter(e => selection.has(e.id) && e.prix != null).reduce((a, e) => a + e.prix, 0);
+    const retour = invest / margeAn;
+    document.getElementById("rendement").innerHTML =
+      li("Poulets produits", kg.format(pouletsAn * n)) +
+      li("Chiffre d'affaires", euro.format(caAn * n)) +
+      li("Coût de l'aliment", "− " + euro.format(alimentAn * n)) +
+      li("Marge sur aliment", euro.format(margeAn * n)) +
+      li("Poulailler amorti en", nb.format(retour) + " an" + (retour >= 2 ? "s" : ""));
+    document.getElementById("note-rendement").textContent =
+      "Estimation indicative : " + TECH.prixPoulet + " € par poulet vendu, aliment à " + TECH.prixAlimentTonne +
+      " € la tonne, " + TECH.alimentGJour + " g par jour et par poulet. Hors poussins, main d'œuvre, abattage et frais vétérinaires.";
+  }
+  document.getElementById("annees").addEventListener("input", rendement);
+  document.addEventListener("change", rendement);
+  rendement();
 })();

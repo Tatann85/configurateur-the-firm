@@ -33,7 +33,18 @@ main { max-width: 1100px; margin: 0 auto; padding: 0 16px 40px; display: grid; g
 .masse { color: var(--doux); }
 .mentions li { font-size: .8rem; color: var(--doux); margin-top: 6px; }
 footer { text-align: center; font-size: .8rem; color: var(--doux); padding: 20px 16px 28px; }
+.fiche { max-width: 1100px; margin: 0 auto; padding: 8px 16px 0; }
+.fiche-grille { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.fiche-bloc { background: var(--carte); border: 1.5px solid var(--bord); border-radius: 18px; padding: 4px 20px 16px; }
+.chiffres { list-style: none; padding: 0; margin: 0; }
+.chiffres li { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-bottom: 1px dashed var(--bord); font-size: .95rem; }
+.chiffres li:last-child { border-bottom: none; }
+.chiffres strong { color: var(--vert); white-space: nowrap; }
+.annees { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; color: var(--doux); }
+.annees input { accent-color: var(--vert); flex: 1; }
+.note { font-size: .78rem; color: var(--doux); margin: 8px 0 0; }
 @media (max-width: 800px) {
+  .fiche-grille { grid-template-columns: 1fr; }
   main { grid-template-columns: 1fr; }
   #recap { position: static; }
   .hero-contenu { flex-direction: column; text-align: center; }

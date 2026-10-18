@@ -38,3 +38,10 @@ const MENTIONS = [
   "Livré en kit : montage par vos soins, ou par notre équipe en option.",
   "Prix indicatifs. Livraison sur devis."
 ];
+
+// Fiche technique et rendement : hypothèses de l'étude interne de 2021.
+const TECH = {
+  longueur: 7.7, largeur: 6.3, hauteur: 3.29, surface: 48,
+  poulets: 450, cycleJours: 90, occupation: 0.70,
+  prixPoulet: 20, alimentGJour: 130, prixAlimentTonne: 600
+};
