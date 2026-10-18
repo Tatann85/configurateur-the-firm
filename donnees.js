@@ -3,7 +3,7 @@
 const TVA = 0.20;
 
 const SOUS_ENSEMBLES = [
-  { id: "SE10", nom: "Structure acier", obligatoire: true, prix: 6773, masse: 571.7, image: "img/structure-acier.png",
+  { id: "SE10", nom: "Structure acier", obligatoire: true, prix: 6773, masse: 571.7, image: "img/structure-acier.jpg",
     description: "Ossature en tubes acier, contreventée, livrée avec sa visserie." },
   { id: "SE20", nom: "Roue mobile", prix: 929, masse: 61.4, image: "img/roue-mobile.png",
     description: "Deux châssis et quatre roues 16 x 6.50-8 pour déplacer le poulailler sur de l'herbe fraîche." },

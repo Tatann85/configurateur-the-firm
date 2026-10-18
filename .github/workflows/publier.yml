@@ -29,7 +29,7 @@ jobs:
         run: |
           mkdir -p _site/img
           cp index.html style.css configurateur.js donnees.js _site/
-          cp img/structure-acier.png img/roue-mobile.png img/anti-bec.svg img/toile.svg img/isolation.svg img/pare-pluie.svg img/tole.svg img/bardage-porte.svg img/bardage-trappe.svg img/equipements.svg _site/img/
+          cp img/structure-acier.jpg img/roue-mobile.png img/anti-bec.svg img/toile.svg img/isolation.svg img/pare-pluie.svg img/tole.svg img/bardage-porte.svg img/bardage-trappe.svg img/equipements.svg _site/img/
       - name: Configurer Pages
         uses: actions/configure-pages@v5
       - name: Uploader le site
