@@ -8,25 +8,40 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header>
-  <h1>Configurateur poulailler mobile</h1>
-  <p class="bandeau">Version de démonstration : composez votre poulailler, nous vous adressons un devis.</p>
+<header class="hero">
+  <div class="hero-contenu">
+    <svg class="poule" viewBox="0 0 120 100" aria-hidden="true">
+      <path d="M30 70 C20 50 30 28 52 26 C58 14 74 12 80 24 C92 22 98 32 92 40 L102 44 L92 50 C96 72 78 88 56 88 C42 88 34 80 30 70 Z" fill="#fffaf0" stroke="#3f5f2a" stroke-width="3"/>
+      <path d="M74 14 C76 6 84 6 84 12 C88 8 94 12 90 18" fill="#c8553d"/>
+      <circle cx="82" cy="30" r="3" fill="#3f5f2a"/>
+      <path d="M50 60 C58 52 70 54 74 62 C66 70 56 70 50 60 Z" fill="#e9dcc0" stroke="#3f5f2a" stroke-width="2"/>
+      <path d="M48 88 L46 98 M62 88 L64 98" stroke="#c8873d" stroke-width="3" stroke-linecap="round"/>
+      <path d="M8 98 C30 92 90 92 116 98" stroke="#6f9a45" stroke-width="3" fill="none" stroke-linecap="round"/>
+    </svg>
+    <div>
+      <p class="surtitre">Élevage en plein air</p>
+      <h1>Composez votre poulailler mobile</h1>
+      <p class="accroche">Un abri robuste qui se déplace avec vos poules, pour leur offrir chaque semaine une herbe nouvelle.</p>
+    </div>
+  </div>
 </header>
 <main>
   <section id="choix">
-    <h2>Sous-ensembles</h2>
+    <h2>Les éléments du poulailler</h2>
     <div id="liste-se"></div>
-    <h2>Options</h2>
+    <h2>Services</h2>
     <div id="liste-opt"></div>
   </section>
   <aside id="recap">
     <h2>Votre poulailler</h2>
     <ul id="recap-lignes"></ul>
     <p class="total"><span>Total HT</span><span id="total">0 €</span></p>
+    <p class="ttc"><span>Total TTC</span><span id="ttc">0 €</span></p>
     <p class="masse"><span>Masse estimée</span><span id="masse">0 kg</span></p>
     <ul id="mentions" class="mentions"></ul>
   </aside>
 </main>
+<footer>Poulailler mobile · configurateur en version de démonstration</footer>
 <script src="donnees.js"></script>
 <script src="configurateur.js"></script>
 </body>
