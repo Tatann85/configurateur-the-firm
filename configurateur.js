@@ -47,37 +47,46 @@
 
   // Fiche technique et rendement
   const nb = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 1 });
-  const joursProd = 365 * TECH.occupation;
-  const pouletsAn = TECH.poulets * joursProd / TECH.cycleJours;
-  const caAn = pouletsAn * TECH.prixPoulet;
-  const alimentAn = TECH.poulets * TECH.alimentGJour / 1000 * joursProd * TECH.prixAlimentTonne / 1000;
-  const margeAn = caAn - alimentAn;
   const li = (k, v) => `<li><span>${k}</span><strong>${v}</strong></li>`;
+  const bandesDefaut = Math.round(365 * TECH.occupation / TECH.cycleJours * 10) / 10;
   document.getElementById("chiffres").innerHTML =
     li("Dimensions au sol", nb.format(TECH.longueur) + " × " + nb.format(TECH.largeur) + " m") +
     li("Hauteur au faîtage", nb.format(TECH.hauteur) + " m") +
     li("Surface intérieure", TECH.surface + " m²") +
     li("Capacité", TECH.poulets + " poulets") +
     li("Densité", nb.format(TECH.poulets / TECH.surface) + " poulets/m²") +
-    li("Durée d'une bande", TECH.cycleJours + " jours") +
-    li("Bandes par an", nb.format(joursProd / TECH.cycleJours) + " (occupation " + Math.round(TECH.occupation * 100) + " %)");
+    `<li><span>Durée d'une bande</span><strong><input type="number" id="duree" min="30" max="200" step="1" value="${TECH.cycleJours}"> jours</strong></li>` +
+    `<li><span>Bandes par an</span><strong><input type="number" id="bandes" min="0.5" max="12" step="0.1" value="${bandesDefaut}"></strong></li>` +
+    `<li><span>Occupation du poulailler</span><strong id="occupation"></strong></li>`;
 
   function rendement() {
     const n = +document.getElementById("annees").value;
+    const duree = Math.max(1, +document.getElementById("duree").value || TECH.cycleJours);
+    const bandesMax = Math.floor(365 / duree * 10) / 10;
+    const champBandes = document.getElementById("bandes");
+    champBandes.max = bandesMax;
+    let bandes = +champBandes.value || 0;
+    if (bandes > bandesMax) { bandes = bandesMax; champBandes.value = bandesMax; }
+    const joursProd = bandes * duree;
+    const pouletsAn = TECH.poulets * bandes;
+    const caAn = pouletsAn * TECH.prixPoulet;
+    const alimentAn = TECH.poulets * TECH.alimentGJour / 1000 * joursProd * TECH.prixAlimentTonne / 1000;
+    const margeAn = caAn - alimentAn;
+    document.getElementById("occupation").textContent = Math.round(joursProd / 365 * 100) + " %";
     document.getElementById("annees-val").textContent = n + (n > 1 ? " ans" : " an");
     const invest = SOUS_ENSEMBLES.concat(OPTIONS).filter(e => selection.has(e.id) && e.prix != null).reduce((a, e) => a + e.prix, 0);
-    const retour = invest / margeAn;
+    const retour = margeAn > 0 ? invest / margeAn : Infinity;
     document.getElementById("rendement").innerHTML =
       li("Poulets produits", kg.format(pouletsAn * n)) +
       li("Chiffre d'affaires", euro.format(caAn * n)) +
       li("Coût de l'aliment", "− " + euro.format(alimentAn * n)) +
       li("Marge sur aliment", euro.format(margeAn * n)) +
-      li("Poulailler amorti en", nb.format(retour) + " an" + (retour >= 2 ? "s" : ""));
+      li("Poulailler amorti en", isFinite(retour) ? nb.format(retour) + " an" + (retour >= 2 ? "s" : "") : "non amorti");
     document.getElementById("note-rendement").textContent =
       "Estimation indicative : " + TECH.prixPoulet + " € par poulet vendu, aliment à " + TECH.prixAlimentTonne +
       " € la tonne, " + TECH.alimentGJour + " g par jour et par poulet. Hors poussins, main d'œuvre, abattage et frais vétérinaires.";
   }
-  document.getElementById("annees").addEventListener("input", rendement);
+  ["annees", "duree", "bandes"].forEach(id => document.getElementById(id).addEventListener("input", rendement));
   document.addEventListener("change", rendement);
   rendement();
 })();
