@@ -43,5 +43,5 @@ const MENTIONS = [
 const TECH = {
   longueur: 7.7, largeur: 6.3, hauteur: 3.29, surface: 48,
   poulets: 450, cycleJours: 90, occupation: 0.70,
-  prixPoulet: 20, alimentGJour: 130, prixAlimentTonne: 600
+  prixPoulet: 20, prixPoussin: 1.41, alimentGJour: 130, prixAlimentTonne: 600
 };

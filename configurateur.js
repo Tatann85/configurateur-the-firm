@@ -59,7 +59,12 @@
     `<li><span>Bandes par an</span><strong><input type="number" id="bandes" min="0.5" max="12" step="0.1" value="${bandesDefaut}"></strong></li>` +
     `<li><span>Occupation du poulailler</span><strong id="occupation"></strong></li>`;
 
+  document.getElementById("poussin").value = TECH.prixPoussin;
+  document.getElementById("vente").value = TECH.prixPoulet;
+
   function rendement() {
+    const prixPoussin = +document.getElementById("poussin").value || 0;
+    const prixVente = +document.getElementById("vente").value || 0;
     const n = +document.getElementById("annees").value;
     const duree = Math.max(1, +document.getElementById("duree").value || TECH.cycleJours);
     const bandesMax = Math.floor(365 / duree * 10) / 10;
@@ -69,9 +74,10 @@
     if (bandes > bandesMax) { bandes = bandesMax; champBandes.value = bandesMax; }
     const joursProd = bandes * duree;
     const pouletsAn = TECH.poulets * bandes;
-    const caAn = pouletsAn * TECH.prixPoulet;
+    const caAn = pouletsAn * prixVente;
+    const poussinsAn = pouletsAn * prixPoussin;
     const alimentAn = TECH.poulets * TECH.alimentGJour / 1000 * joursProd * TECH.prixAlimentTonne / 1000;
-    const margeAn = caAn - alimentAn;
+    const margeAn = caAn - alimentAn - poussinsAn;
     document.getElementById("occupation").textContent = Math.round(joursProd / 365 * 100) + " %";
     document.getElementById("annees-val").textContent = n + (n > 1 ? " ans" : " an");
     const invest = SOUS_ENSEMBLES.concat(OPTIONS).filter(e => selection.has(e.id) && e.prix != null).reduce((a, e) => a + e.prix, 0);
@@ -79,14 +85,16 @@
     document.getElementById("rendement").innerHTML =
       li("Poulets produits", kg.format(pouletsAn * n)) +
       li("Chiffre d'affaires", euro.format(caAn * n)) +
+      li("Achat des poussins", "− " + euro.format(poussinsAn * n)) +
       li("Coût de l'aliment", "− " + euro.format(alimentAn * n)) +
-      li("Marge sur aliment", euro.format(margeAn * n)) +
+      li("Prix du poulailler", "− " + euro.format(invest)) +
+      `<li class="net"><span>Résultat net sur ${n} an${n > 1 ? "s" : ""}</span><strong>${euro.format(margeAn * n - invest)}</strong></li>` +
       li("Poulailler amorti en", isFinite(retour) ? nb.format(retour) + " an" + (retour >= 2 ? "s" : "") : "non amorti");
     document.getElementById("note-rendement").textContent =
-      "Estimation indicative : " + TECH.prixPoulet + " € par poulet vendu, aliment à " + TECH.prixAlimentTonne +
-      " € la tonne, " + TECH.alimentGJour + " g par jour et par poulet. Hors poussins, main d'œuvre, abattage et frais vétérinaires.";
+      "Estimation indicative : aliment à " + TECH.prixAlimentTonne + " € la tonne, " + TECH.alimentGJour +
+      " g par jour et par poulet. Hors main d'œuvre, abattage, mortalité et frais vétérinaires.";
   }
-  ["annees", "duree", "bandes"].forEach(id => document.getElementById(id).addEventListener("input", rendement));
+  ["annees", "duree", "bandes", "poussin", "vente"].forEach(id => document.getElementById(id).addEventListener("input", rendement));
   document.addEventListener("change", rendement);
   rendement();
 })();
